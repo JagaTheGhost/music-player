@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Nebula Stream MP3",
+    "slug": "nebula-stream",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nebulastream.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#07090e",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "package": "com.nebulastream.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "Nebula Stream MP3 Player",
+      "shortName": "Nebula MP3",
+      "themeColor": "#0066ff",
+      "backgroundColor": "#07090e",
+      "display": "standalone",
+      "orientation": "any"
+    }
+  }
+}
