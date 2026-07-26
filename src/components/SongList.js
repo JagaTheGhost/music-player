@@ -9,6 +9,7 @@ import Oscilloscope from './Oscilloscope';
 import CdDisc from './CdDisc';
 import VinylDisc from './VinylDisc';
 import CassetteTape from './CassetteTape';
+import Y2kLoadingScreen from './Y2kLoadingScreen';
 
 const VISUALIZERS = [
   { id: 'cd', label: '📀 CD DISC' },
@@ -196,9 +197,7 @@ export default function SongList({
       <View style={styles.divider} />
 
       {loading ? (
-        <View style={styles.loadingBox}>
-          <Text style={styles.loadingText}>READING OPTICAL MP3 DISC…</Text>
-        </View>
+        <Y2kLoadingScreen />
       ) : error ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyEmoji}>⚠️</Text>
@@ -415,16 +414,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e2438',
     marginHorizontal: 4,
     marginBottom: 6,
-  },
-  loadingBox: {
-    paddingVertical: 50,
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#39ff14',
-    fontSize: 12,
-    fontWeight: '800',
-    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   emptyState: {
     alignItems: 'center',
