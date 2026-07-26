@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Audio } from 'expo-av';
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 const FAVORITES_KEY = 'nebula_favorites';
@@ -74,6 +75,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const repeatModeRef = useRef('off');
   const volumeRef = useRef(1.0);
   const rateRef = useRef(1.0);
+  const isTransitioningRef = useRef(false);
 
   useEffect(() => { currentSongRef.current = currentSong; }, [currentSong]);
   useEffect(() => { queueRef.current = queue; }, [queue]);
@@ -107,7 +109,7 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  // ── Audio mode setup ──
+  // ── Audio mode setup for background audio ──
   useEffect(() => {
     Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
@@ -117,6 +119,30 @@ export const AudioPlayerProvider = ({ children }) => {
     }).catch(() => {});
     return () => { cleanUpSound(); };
   }, []);
+
+  // ── Media Session API for Lock Screen & Background Playback ──
+  const updateMediaSession = (song) => {
+    if (Platform.OS === 'web' && typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new window.MediaMetadata({
+          title: song.title || 'Nebula Audio',
+          artist: song.artist || 'Unknown Artist',
+          album: song.album || 'Nebula Stream',
+          artwork: song.cover_url ? [
+            { src: song.cover_url, sizes: '512x512', type: 'image/jpeg' }
+          ] : []
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => resumeSong());
+        navigator.mediaSession.setActionHandler('pause', () => pauseSong());
+        navigator.mediaSession.setActionHandler('nexttrack', () => playNext(false));
+        navigator.mediaSession.setActionHandler('previoustrack', () => playPrevious());
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime && durationMillis) seekTo(details.seekTime / (durationMillis / 1000));
+        });
+      } catch (e) { /* ignore */ }
+    }
+  };
 
   // ── Sleep timer countdown ──
   const timerIsActive = sleepTimer !== null;
@@ -144,7 +170,10 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const cleanUpSound = async () => {
     if (soundRef.current) {
-      try { await soundRef.current.unloadAsync(); } catch (_) {}
+      try {
+        await soundRef.current.setStatusAsync({ shouldPlay: false });
+        await soundRef.current.unloadAsync();
+      } catch (_) {}
       soundRef.current = null;
     }
   };
@@ -161,80 +190,68 @@ export const AudioPlayerProvider = ({ children }) => {
     setPlaybackProgress((status.positionMillis ?? 0) / (status.durationMillis || 1));
     setPlaybackError(null);
 
-    if (status.didJustFinish) {
+    // Track finished naturally
+    if (status.didJustFinish && !isTransitioningRef.current) {
+      isTransitioningRef.current = true;
       setIsPlaying(false);
       setPlaybackProgress(0);
       setPositionMillis(0);
+
       if (repeatModeRef.current === 'one' && soundRef.current) {
-        soundRef.current.setPositionAsync(0).then(() => soundRef.current?.playAsync());
+        soundRef.current.setPositionAsync(0).then(() => {
+          soundRef.current?.playAsync().then(() => {
+            isTransitioningRef.current = false;
+          });
+        });
       } else {
-        playNext(true);
+        // Automatic background transition to next song
+        setTimeout(() => {
+          playNext(true);
+        }, 50);
       }
     }
   };
 
-  // ── Core Playback Actions with DJ Crossfade ──
-  const playSong = async (song) => {
+  // ── Core Playback Action with Sleep-Safe Background Transition ──
+  const playSong = async (song, isAuto = false) => {
     if (!song?.audio_url) {
       setPlaybackError('This track has no audio source.');
+      isTransitioningRef.current = false;
       return;
     }
     try {
       setIsLoading(true);
       setPlaybackError(null);
 
-      // Smooth Audio Crossfade (Fade out outgoing sound if playing)
-      const oldSound = soundRef.current;
-      if (oldSound && isPlaying) {
-        let fadeVol = volumeRef.current;
-        const fadeInterval = setInterval(async () => {
-          fadeVol -= 0.2;
-          if (fadeVol <= 0) {
-            clearInterval(fadeInterval);
-            try { await oldSound.stopAsync(); await oldSound.unloadAsync(); } catch (_) {}
-          } else {
-            try { await oldSound.setVolumeAsync(Math.max(0, fadeVol)); } catch (_) {}
-          }
-        }, 80);
-      } else {
-        await cleanUpSound();
-      }
+      // Clean up previous sound instance directly to prevent background audio locks
+      await cleanUpSound();
 
       setCurrentSong(song);
+      updateMediaSession(song);
       setIsPlaying(false);
       setPlaybackProgress(0);
       setPositionMillis(0);
 
-      // Create new sound instance with initial volume 0 for DJ fade-in
       const targetVol = clampVolume(volumeRef.current);
       const { sound } = await Audio.Sound.createAsync(
         { uri: song.audio_url },
         {
           shouldPlay: true,
-          volume: 0.1,
+          volume: targetVol,
           rate: clampRate(rateRef.current),
           shouldCorrectPitch: true,
         },
         onPlaybackStatusUpdate
       );
-      soundRef.current = sound;
 
-      // DJ Fade-In new track to target volume
-      let inVol = 0.1;
-      const fadeInInterval = setInterval(async () => {
-        inVol += 0.2;
-        if (inVol >= targetVol) {
-          clearInterval(fadeInInterval);
-          try { await sound.setVolumeAsync(targetVol); } catch (_) {}
-        } else {
-          try { await sound.setVolumeAsync(inVol); } catch (_) {}
-        }
-      }, 70);
+      soundRef.current = sound;
+      setIsPlaying(true);
 
     } catch (err) {
       setPlaybackError('Failed to stream: ' + (err.message || err));
     } finally {
       setIsLoading(false);
+      isTransitioningRef.current = false;
     }
   };
 
@@ -254,24 +271,28 @@ export const AudioPlayerProvider = ({ children }) => {
   const playNext = (isAuto = false) => {
     const q = queueRef.current;
     const current = currentSongRef.current;
-    if (!q.length || !current) return;
+    if (!q.length || !current) {
+      isTransitioningRef.current = false;
+      return;
+    }
 
     if (isShuffleRef.current) {
       let idx = Math.floor(Math.random() * q.length);
       if (q.length > 1 && q[idx]?.id === current.id) idx = (idx + 1) % q.length;
-      playSong(q[idx]);
+      playSong(q[idx], isAuto);
     } else {
       const ci = q.findIndex(s => s.id === current.id);
       if (ci !== -1 && ci < q.length - 1) {
-        playSong(q[ci + 1]);
+        playSong(q[ci + 1], isAuto);
       } else if (repeatModeRef.current === 'all') {
-        playSong(q[0]);
+        playSong(q[0], isAuto);
       } else if (!isAuto) {
-        playSong(q[0]);
+        playSong(q[0], isAuto);
       } else {
         setIsPlaying(false);
         setPlaybackProgress(0);
         setPositionMillis(0);
+        isTransitioningRef.current = false;
       }
     }
   };
