@@ -13,28 +13,32 @@ const CATEGORY_ITEMS = [
   { id: 'english', label: 'English Hits', code: 'ENG' },
 ];
 
-/**
- * Y2K Hi-Fi Navigation Rack with FlatIcon integration.
- */
-export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
+export default function Sidebar({
+  activeTab,
+  onTabChange,
+  onCreatePlaylist,
+  isInstallable,
+  isStandalone,
+  onTriggerInstall,
+}) {
   const { playlists, deletePlaylist } = useAudioPlayer();
 
   return (
     <View style={styles.sidebar}>
-      {/* Y2K Brand Header */}
+      {/* Vintage Stereo Brand Header */}
       <View style={styles.brandBox}>
         <View style={styles.brandBadge}>
-          <FlatIcon name="disc" size={18} color="#ffffff" />
+          <FlatIcon name="disc" size={18} color="#000000" />
         </View>
-        <View>
-          <Text style={styles.brandTitle}>NEBULA</Text>
-          <Text style={styles.brandSubtitle}>DIGITAL MP3 2000</Text>
+        <View style={styles.brandTextCol}>
+          <Text style={styles.brandTitle}>NEBULA STEREO</Text>
+          <Text style={styles.brandSubtitle}>HI-FI MP3 RACK • MODEL 2000</Text>
         </View>
       </View>
 
-      {/* Rack Group 1 */}
+      {/* Stereo Rack Section 1: Audio Channels */}
       <View style={styles.group}>
-        <Text style={styles.groupHeader}>AUDIO SELECT</Text>
+        <Text style={styles.groupHeader}>MAIN CHANNEL SELECT</Text>
         {NAV_ITEMS.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -46,7 +50,7 @@ export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
               <FlatIcon
                 name={item.iconName}
                 size={14}
-                color={isActive ? '#39ff14' : '#94a3b8'}
+                color={isActive ? '#ffaa00' : '#94a3b8'}
               />
               <Text style={[styles.btnLabel, isActive && styles.btnLabelActive]}>
                 {item.label}
@@ -59,9 +63,9 @@ export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
 
       <View style={styles.divider} />
 
-      {/* Rack Group 2: Genres */}
+      {/* Stereo Rack Section 2: Genre Channels */}
       <View style={styles.group}>
-        <Text style={styles.groupHeader}>GENRE CHANNELS</Text>
+        <Text style={styles.groupHeader}>GENRE BANDS</Text>
         {CATEGORY_ITEMS.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -84,12 +88,12 @@ export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
 
       <View style={styles.divider} />
 
-      {/* Rack Group 3: Custom Playlists */}
+      {/* Stereo Rack Section 3: Playlists */}
       <View style={styles.group}>
         <View style={styles.playlistHeaderRow}>
           <Text style={styles.groupHeader}>MY PLAYLISTS ({playlists.length})</Text>
           <Pressable onPress={onCreatePlaylist} style={styles.newPlBtn}>
-            <FlatIcon name="add" size={10} color="#39ff14" />
+            <FlatIcon name="add" size={10} color="#ffaa00" />
             <Text style={styles.newPlBtnText}>NEW</Text>
           </Pressable>
         </View>
@@ -117,12 +121,26 @@ export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
         })}
       </View>
 
-      {/* Footer System Status */}
+      {/* Sidebar Footer: PWA Installation & System Status */}
       <View style={styles.footer}>
+        {!isStandalone ? (
+          <Pressable style={styles.installAppBtn} onPress={onTriggerInstall}>
+            <FlatIcon name="download" size={14} color="#000000" />
+            <Text style={styles.installAppBtnText}>
+              {isInstallable ? 'INSTALL DESKTOP APP' : 'GET DESKTOP / MOBILE APP'}
+            </Text>
+          </Pressable>
+        ) : (
+          <View style={styles.standaloneBadge}>
+            <View style={styles.standaloneDot} />
+            <Text style={styles.standaloneText}>RETRO PWA ACTIVE</Text>
+          </View>
+        )}
+
         <View style={styles.statusBox}>
           <View style={styles.statusRow}>
             <View style={styles.readyLed} />
-            <Text style={styles.systemText}>SYSTEM: READY</Text>
+            <Text style={styles.systemText}>SYSTEM: VINTAGE HI-FI ONLINE</Text>
           </View>
           <Text style={styles.userText}>USER: JAGADEESH</Text>
         </View>
@@ -133,43 +151,51 @@ export default function Sidebar({ activeTab, onTabChange, onCreatePlaylist }) {
 
 const styles = StyleSheet.create({
   sidebar: {
-    width: 220,
-    backgroundColor: '#0d0e15',
-    paddingTop: 20,
+    width: 230,
+    backgroundColor: '#0c0e14',
+    paddingTop: 18,
     paddingBottom: 16,
     paddingHorizontal: 12,
     borderRightWidth: 2,
-    borderRightColor: '#1c1f2e',
+    borderRightColor: '#1c2232',
   },
   brandBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 20,
-    padding: 8,
-    backgroundColor: '#121522',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#242a3f',
+    marginBottom: 18,
+    padding: 10,
+    backgroundColor: '#141824',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: '#ffaa00',
+    ...(Platform.OS === 'web' && {
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.4)',
+    }),
   },
   brandBadge: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: '#0066ff',
+    borderRadius: 6,
+    backgroundColor: '#ffaa00',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  brandTextCol: {
+    flex: 1,
+  },
   brandTitle: {
     color: '#ffffff',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   brandSubtitle: {
-    color: '#39ff14',
-    fontSize: 8,
+    color: '#ffaa00',
+    fontSize: 7.5,
     fontWeight: '800',
+    letterSpacing: 0.5,
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   group: {
@@ -179,9 +205,10 @@ const styles = StyleSheet.create({
     color: '#64748b',
     fontSize: 9,
     fontWeight: '800',
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
     paddingHorizontal: 6,
     marginBottom: 2,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   playlistHeaderRow: {
     flexDirection: 'row',
@@ -192,16 +219,16 @@ const styles = StyleSheet.create({
   newPlBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
-    backgroundColor: 'rgba(57, 255, 20, 0.15)',
+    gap: 3,
+    backgroundColor: 'rgba(255, 170, 0, 0.15)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#39ff14',
+    borderColor: '#ffaa00',
   },
   newPlBtnText: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 8,
     fontWeight: '900',
   },
@@ -210,19 +237,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 6,
     gap: 10,
-    backgroundColor: '#121522',
+    backgroundColor: '#121622',
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#1e2638',
     ...(Platform.OS === 'web' && { cursor: 'pointer' }),
   },
   btnActive: {
-    backgroundColor: '#0055d4',
-    borderColor: '#0088ff',
+    backgroundColor: '#1f273b',
+    borderColor: '#ffaa00',
   },
   btnIcon: {
-    fontSize: 14,
+    fontSize: 13,
   },
   btnLabel: {
     flex: 1,
@@ -232,6 +259,7 @@ const styles = StyleSheet.create({
   },
   btnLabelActive: {
     color: '#ffffff',
+    fontWeight: '800',
   },
   delPlBtn: {
     padding: 2,
@@ -241,10 +269,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 4,
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
   },
   codeBadgeActive: {
-    backgroundColor: '#39ff14',
+    backgroundColor: '#ffaa00',
   },
   codeText: {
     color: '#94a3b8',
@@ -252,35 +280,81 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   codeTextActive: {
-    color: '#031407',
+    color: '#000000',
   },
   ledIndicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#242a3f',
+    backgroundColor: '#263048',
   },
   ledIndicatorActive: {
-    backgroundColor: '#39ff14',
+    backgroundColor: '#ffaa00',
     ...(Platform.OS === 'web' && {
-      boxShadow: '0 0 6px #39ff14',
+      boxShadow: '0 0 6px #ffaa00',
     }),
   },
   divider: {
     height: 1,
-    backgroundColor: '#1e2438',
+    backgroundColor: '#1c2232',
     marginVertical: 12,
   },
   footer: {
     marginTop: 'auto',
+    gap: 10,
     paddingTop: 12,
   },
+  installAppBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#ffaa00',
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ffcc00',
+    ...(Platform.OS === 'web' && { cursor: 'pointer' }),
+  },
+  installAppBtnText: {
+    color: '#000000',
+    fontSize: 9.5,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  standaloneBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(0, 229, 163, 0.12)',
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#00e5a3',
+  },
+  standaloneDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#00e5a3',
+    ...(Platform.OS === 'web' && {
+      boxShadow: '0 0 6px #00e5a3',
+    }),
+  },
+  standaloneText: {
+    color: '#00e5a3',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
+  },
   statusBox: {
-    backgroundColor: '#0a0d15',
-    borderRadius: 8,
+    backgroundColor: '#080a10',
+    borderRadius: 6,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#1e2638',
     gap: 4,
   },
   statusRow: {
@@ -292,20 +366,20 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#39ff14',
+    backgroundColor: '#00e5a3',
     ...(Platform.OS === 'web' && {
-      boxShadow: '0 0 6px #39ff14',
+      boxShadow: '0 0 6px #00e5a3',
     }),
   },
   systemText: {
-    color: '#39ff14',
-    fontSize: 9,
+    color: '#00e5a3',
+    fontSize: 8.5,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   userText: {
     color: '#64748b',
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '700',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },

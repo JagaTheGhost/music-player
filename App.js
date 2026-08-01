@@ -7,6 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 
 import { AudioPlayerProvider, useAudioPlayer } from './src/hooks/useAudioPlayer';
+import { usePWAInstall } from './src/hooks/usePWAInstall';
 import { supabase } from './src/services/supabaseClient';
 import Sidebar from './src/components/Sidebar';
 import SongList from './src/components/SongList';
@@ -15,6 +16,7 @@ import MobilePlayer from './src/components/MobilePlayer';
 import QueueDrawer from './src/components/QueueDrawer';
 import CreatePlaylistModal from './src/components/CreatePlaylistModal';
 import AddToPlaylistModal from './src/components/AddToPlaylistModal';
+import PwaInstallModal from './src/components/PwaInstallModal';
 import FlatIcon from './src/components/FlatIcon';
 
 const MOBILE_TABS = [
@@ -49,18 +51,18 @@ function FilterPills({ activeTab, onTabChange }) {
 function SearchBar({ value, onChange }) {
   return (
     <View style={styles.searchBox}>
-      <FlatIcon name="search" size={15} color="#0066ff" />
+      <FlatIcon name="search" size={15} color="#ffaa00" />
       <TextInput
         style={styles.searchInput}
-        placeholder="SEARCH MP3 TRACKS OR ARTISTS…"
-        placeholderTextColor="#475569"
+        placeholder="SEARCH RETRO TRACKS OR ARTISTS…"
+        placeholderTextColor="#64748b"
         value={value}
         onChangeText={onChange}
         clearButtonMode="while-editing"
       />
       {value.length > 0 && (
         <Pressable onPress={() => onChange('')} style={styles.clearBtn}>
-          <FlatIcon name="close" size={14} color="#64748b" />
+          <FlatIcon name="close" size={14} color="#94a3b8" />
         </Pressable>
       )}
     </View>
@@ -74,8 +76,11 @@ function MusicApp() {
     favorites, playlists, toggleFavorite, setQueue, playbackError, clearError,
   } = useAudioPlayer();
 
+  const {
+    isInstallable, isStandalone, isIOS, showModal, setShowModal, triggerInstall,
+  } = usePWAInstall();
+
   const { width, height } = useWindowDimensions();
-  // Require both width > 768 AND height > 500 for desktop layout so mobile landscape view uses MobilePlayer Boombox Deck!
   const isDesktop = width > 768 && height > 500;
 
   const [songs, setSongs] = useState([]);
@@ -160,14 +165,29 @@ function MusicApp() {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             onCreatePlaylist={() => setShowCreatePlaylistModal(true)}
+            isInstallable={isInstallable}
+            isStandalone={isStandalone}
+            onTriggerInstall={triggerInstall}
           />
         )}
 
         <View style={styles.main}>
-          {/* Top Clean Header */}
+          {/* Top Retro Header */}
           <View style={styles.contentHeader}>
             <View style={styles.searchRow}>
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
+
+              {!isStandalone && (
+                <TouchableOpacity
+                  style={styles.topInstallBtn}
+                  onPress={triggerInstall}
+                >
+                  <FlatIcon name="download" size={14} color="#000000" />
+                  <Text style={styles.topInstallBtnText}>
+                    {isDesktop ? 'INSTALL APP' : 'GET APP'}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             {!isDesktop && (
@@ -177,7 +197,7 @@ function MusicApp() {
             )}
           </View>
 
-          {/* Song List & Y2K Hi-Fi Deck */}
+          {/* Song List & Main Deck */}
           <SongList
             songs={filteredSongs}
             loading={loading}
@@ -202,12 +222,15 @@ function MusicApp() {
         />
       </View>
 
-      {/* Y2K Transport Bar */}
+      {/* Retro Transport Master Bar */}
       <PlayerBar
         isDesktop={isDesktop}
         onOpenMobilePlayer={() => setShowMobilePlayer(true)}
         onToggleQueue={() => setShowQueueDrawer(prev => !prev)}
         isQueueOpen={showQueueDrawer}
+        isInstallable={isInstallable}
+        isStandalone={isStandalone}
+        onTriggerInstall={triggerInstall}
       />
 
       {playbackError && (
@@ -236,6 +259,14 @@ function MusicApp() {
         onClose={() => setAddToPlaylistSong(null)}
         onCreateNew={() => setShowCreatePlaylistModal(true)}
       />
+
+      <PwaInstallModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        isIOS={isIOS}
+        triggerInstall={triggerInstall}
+        isInstallable={isInstallable}
+      />
     </SafeAreaView>
   );
 }
@@ -254,13 +285,13 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <View style={styles.crashScreen}>
-          <Text style={styles.crashTitle}>⚠️ HARDWARE FAULT</Text>
+          <Text style={styles.crashTitle}>⚠️ STEREO SYSTEM FAULT</Text>
           <Text style={styles.crashMsg}>{this.state.error?.toString()}</Text>
           <TouchableOpacity
             style={styles.crashRetry}
             onPress={() => this.setState({ hasError: false, error: null })}
           >
-            <Text style={styles.crashRetryText}>RESTART SYSTEM</Text>
+            <Text style={styles.crashRetryText}>RESET STEREO</Text>
           </TouchableOpacity>
         </View>
       );
@@ -282,7 +313,7 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#07090e',
+    backgroundColor: '#0b0d12',
   },
   body: {
     flex: 1,
@@ -297,11 +328,11 @@ const styles = StyleSheet.create({
   },
   contentHeader: {
     flexDirection: 'column',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 2,
-    borderBottomColor: '#1e2438',
-    backgroundColor: '#0d0e15',
+    borderBottomColor: '#1c2438',
+    backgroundColor: '#101420',
     gap: 10,
     ...(Platform.OS === 'web' && {
       position: 'sticky',
@@ -312,18 +343,20 @@ const styles = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     width: '100%',
+    gap: 12,
   },
   searchBox: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#121522',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    height: 40,
+    backgroundColor: '#141824',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 38,
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#263048',
     gap: 10,
     maxWidth: 480,
   },
@@ -331,8 +364,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     paddingVertical: 0,
-    color: '#39ff14',
-    fontSize: 12,
+    color: '#00e5a3',
+    fontSize: 11.5,
     fontWeight: '700',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
     ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
@@ -342,6 +375,24 @@ const styles = StyleSheet.create({
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  topInstallBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#ffaa00',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ffcc00',
+    ...(Platform.OS === 'web' && { cursor: 'pointer' }),
+  },
+  topInstallBtnText: {
+    color: '#000000',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 0.5,
   },
   pillsWrapper: {
     width: '100%',
@@ -355,21 +406,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: '#121522',
+    backgroundColor: '#141824',
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#263048',
   },
   pillActive: {
-    backgroundColor: '#0066ff',
-    borderColor: '#3399ff',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   pillText: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 10,
-    fontWeight: '900',
+    fontWeight: '800',
   },
   pillTextActive: {
-    color: '#ffffff',
+    color: '#000000',
+    fontWeight: '900',
   },
   errBanner: {
     position: 'absolute',
@@ -377,7 +429,7 @@ const styles = StyleSheet.create({
     left: 14,
     right: 14,
     backgroundColor: '#991b1b',
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -395,14 +447,14 @@ const styles = StyleSheet.create({
   },
   crashScreen: {
     flex: 1,
-    backgroundColor: '#07090e',
+    backgroundColor: '#0b0d12',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
     gap: 14,
   },
   crashTitle: {
-    color: '#ff0033',
+    color: '#ff3366',
     fontSize: 22,
     fontWeight: '900',
   },
@@ -413,13 +465,13 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   crashRetry: {
-    backgroundColor: '#0066ff',
+    backgroundColor: '#ffaa00',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   crashRetryText: {
-    color: '#ffffff',
+    color: '#000000',
     fontWeight: '900',
     fontSize: 13,
   },

@@ -1,13 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Platform } from 'react-native';
-import { useAudioPlayer } from '../hooks/useAudioPlayer';
 
-/**
- * Winamp-Style Graphic Equalizer Wave Oscilloscope with Dynamic Neon Theme support.
- */
 export default function Oscilloscope({ isPlaying = false, barCount = 16, height = 36 }) {
-  const { activeTheme } = useAudioPlayer();
-  const themeColor = activeTheme?.color || '#39ff14';
+  const themeColor = '#ffaa00';
 
   const animValues = useRef(
     Array.from({ length: barCount }, () => new Animated.Value(0.15))
@@ -50,7 +45,7 @@ export default function Oscilloscope({ isPlaying = false, barCount = 16, height 
                   inputRange: [0, 1],
                   outputRange: ['0%', '100%'],
                 }),
-                backgroundColor: themeColor,
+                backgroundColor: idx % 3 === 0 ? '#00e5a3' : themeColor,
                 ...(Platform.OS === 'web' && isPlaying && {
                   boxShadow: `0 0 6px ${themeColor}`,
                 }),
@@ -68,18 +63,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    backgroundColor: '#0a0d14',
-    borderRadius: 8,
+    backgroundColor: '#0a0c12',
+    borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#1e2638',
     gap: 3,
   },
   barSlot: {
     flex: 1,
     height: '100%',
-    backgroundColor: '#121624',
+    backgroundColor: '#141824',
     borderRadius: 2,
     justifyContent: 'flex-end',
     overflow: 'hidden',

@@ -3,9 +3,6 @@ import { View, Text, StyleSheet, Pressable, Animated, Platform } from 'react-nat
 import AlbumArt from './AlbumArt';
 import FlatIcon from './FlatIcon';
 
-/**
- * Early 2000s Y2K SongRow with vector FlatIcons.
- */
 export default function SongRow({
   song,
   index,
@@ -43,10 +40,10 @@ export default function SongRow({
           isActive && styles.rowActive,
         ]}
       >
-        {/* Index / Play Flat Icon */}
+        {/* Index / Play Icon */}
         <View style={styles.indexCol}>
           {showPlayIcon ? (
-            <FlatIcon name="play" size={10} color={isActive ? '#39ff14' : '#ffffff'} />
+            <FlatIcon name="play" size={10} color={isActive ? '#ffaa00' : '#ffffff'} />
           ) : (
             <Text style={[styles.indexText, isActive && styles.indexActive]}>
               {index < 10 ? `0${index}` : index}
@@ -73,7 +70,7 @@ export default function SongRow({
           </Text>
         </View>
 
-        {/* Tag (Desktop View only) */}
+        {/* Tag / Format */}
         {isDesktop && (
           <View style={[styles.tagBadge, isActive && styles.tagBadgeActive]}>
             <Text style={[styles.tagText, isActive && styles.tagTextActive]}>
@@ -82,25 +79,23 @@ export default function SongRow({
           </View>
         )}
 
-        {/* Album (Desktop Wide only) */}
+        {/* Album */}
         {isDesktop && (
           <Text style={styles.albumText} numberOfLines={1}>
-            {song.album || 'Single'}
+            {song.album || 'Stereo Track'}
           </Text>
         )}
 
-        {/* Action Buttons Container */}
+        {/* Action Buttons */}
         <View style={styles.actionsCol}>
-          {/* Add to Playlist button */}
           <Pressable
             onPress={(e) => { e.preventDefault?.(); onAddToPlaylist?.(song); }}
             style={styles.addPlaylistBtn}
             accessibilityLabel="Add to playlist"
           >
-            <FlatIcon name="add" size={12} color="#39ff14" />
+            <FlatIcon name="add" size={12} color="#ffaa00" />
           </Pressable>
 
-          {/* Star Favorite */}
           <Pressable
             onPress={(e) => { e.preventDefault?.(); onLikePress(); }}
             style={styles.starBtn}
@@ -108,7 +103,7 @@ export default function SongRow({
             <FlatIcon
               name={isLiked ? 'star' : 'star-outline'}
               size={14}
-              color={isLiked ? '#ffcc00' : '#475569'}
+              color={isLiked ? '#ffaa00' : '#64748b'}
             />
           </Pressable>
         </View>
@@ -130,26 +125,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 6,
     marginHorizontal: 2,
     marginBottom: 3,
     gap: 8,
-    backgroundColor: '#121522',
+    backgroundColor: '#121624',
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#1e2638',
     overflow: 'hidden',
     ...(Platform.OS === 'web' && { cursor: 'pointer', userSelect: 'none' }),
   },
   rowHovered: {
-    backgroundColor: '#1a1f33',
-    borderColor: '#2d3754',
+    backgroundColor: '#192032',
+    borderColor: '#ffaa00',
   },
   rowActive: {
-    backgroundColor: '#0044b3',
-    borderColor: '#0088ff',
+    backgroundColor: '#1f283e',
+    borderColor: '#ffaa00',
+    borderWidth: 1.5,
   },
   indexCol: {
-    width: 20,
+    width: 22,
     alignItems: 'center',
   },
   indexText: {
@@ -159,7 +155,7 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   indexActive: {
-    color: '#39ff14',
+    color: '#ffaa00',
   },
   artCol: {
     marginRight: 0,
@@ -176,29 +172,33 @@ const styles = StyleSheet.create({
   },
   songTitleActive: {
     color: '#ffffff',
+    fontWeight: '800',
   },
   songArtist: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   tagBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
+    borderWidth: 1,
+    borderColor: '#293550',
   },
   tagBadgeActive: {
-    backgroundColor: '#39ff14',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   tagText: {
     color: '#94a3b8',
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '900',
   },
   tagTextActive: {
-    color: '#031407',
+    color: '#000000',
   },
   albumText: {
     flex: 1,
@@ -215,7 +215,9 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 4,
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
+    borderWidth: 1,
+    borderColor: '#2f3b58',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -6,9 +6,6 @@ import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import AlbumArt from './AlbumArt';
 import FlatIcon from './FlatIcon';
 
-/**
- * Slide-out Up Next Queue Drawer with vector FlatIcons.
- */
 export default function QueueDrawer({ visible, onClose }) {
   const {
     currentSong, isPlaying, queue, playSong,
@@ -38,7 +35,7 @@ export default function QueueDrawer({ visible, onClose }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleBox}>
-          <FlatIcon name="queue" size={16} color="#0066ff" />
+          <FlatIcon name="queue" size={16} color="#ffaa00" />
           <Text style={styles.headerTitle}>UP NEXT QUEUE</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>{queue.length}</Text>
@@ -101,7 +98,6 @@ export default function QueueDrawer({ visible, onClose }) {
                   </View>
                 </Pressable>
 
-                {/* Controls: Up, Down, Remove */}
                 <View style={styles.controlsGroup}>
                   <Pressable
                     disabled={idx === 0}
@@ -138,16 +134,16 @@ export default function QueueDrawer({ visible, onClose }) {
 const styles = StyleSheet.create({
   drawer: {
     position: 'absolute',
-    top: 60,
+    top: 54,
     right: 0,
     bottom: 90,
     width: 320,
-    backgroundColor: '#0d0f18',
+    backgroundColor: '#101420',
     borderLeftWidth: 2,
-    borderLeftColor: '#1e2438',
+    borderLeftColor: '#ffaa00',
     zIndex: 100,
     ...(Platform.OS === 'web' && {
-      boxShadow: '-10px 0 30px rgba(0,0,0,0.8)',
+      boxShadow: '-10px 0 30px rgba(0,0,0,0.85)',
     }),
   },
   header: {
@@ -157,8 +153,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e2438',
-    backgroundColor: '#121522',
+    borderBottomColor: '#263048',
+    backgroundColor: '#141824',
   },
   headerTitleBox: {
     flexDirection: 'row',
@@ -166,19 +162,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerTitle: {
-    color: '#ffffff',
+    color: '#ffaa00',
     fontSize: 12,
     fontWeight: '900',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   countBadge: {
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ffaa00',
   },
   countText: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 10,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -198,20 +197,21 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sectionLabel: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 9,
     fontWeight: '900',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   nowPlayingCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     padding: 10,
-    backgroundColor: '#141829',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#0066ff',
+    backgroundColor: '#1b2234',
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: '#ffaa00',
   },
   meta: {
     flex: 1,
@@ -223,18 +223,18 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   artist: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 10,
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   playingBadge: {
-    backgroundColor: '#0066ff',
+    backgroundColor: '#ffaa00',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 4,
   },
   playingText: {
-    color: '#ffffff',
+    color: '#000000',
     fontSize: 8,
     fontWeight: '900',
   },
@@ -242,15 +242,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
-    backgroundColor: '#121522',
-    borderRadius: 8,
+    backgroundColor: '#141824',
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#263048',
     gap: 8,
   },
   itemRowActive: {
-    borderColor: '#0066ff',
-    backgroundColor: '#161c30',
+    borderColor: '#ffaa00',
+    backgroundColor: '#1f283e',
   },
   itemMain: {
     flex: 1,
@@ -270,7 +270,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   itemTitleActive: {
-    color: '#39ff14',
+    color: '#ffaa00',
+    fontWeight: '800',
   },
   itemArtist: {
     color: '#64748b',
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 4,
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
     alignItems: 'center',
     justifyContent: 'center',
   },

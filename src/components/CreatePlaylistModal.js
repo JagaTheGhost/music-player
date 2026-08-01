@@ -6,9 +6,6 @@ import { useAudioPlayer } from '../hooks/useAudioPlayer';
 
 const ICONS = ['🎶', '🔥', '🌙', '⚡', '🎧', '💖', '🎸', '🪐', '☕', '🚀'];
 
-/**
- * Modal to create a new custom playlist.
- */
 export default function CreatePlaylistModal({ visible, onClose }) {
   const { createPlaylist } = useAudioPlayer();
   const [name, setName] = useState('');
@@ -37,7 +34,7 @@ export default function CreatePlaylistModal({ visible, onClose }) {
         <View style={styles.modalBox}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>CREATE NEW PLAYLIST</Text>
+            <Text style={styles.title}>CREATE RETRO PLAYLIST</Text>
             <Pressable onPress={onClose} style={styles.closeBtn}>
               <Text style={styles.closeText}>✕</Text>
             </Pressable>
@@ -63,8 +60,8 @@ export default function CreatePlaylistModal({ visible, onClose }) {
             <Text style={styles.label}>PLAYLIST NAME</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. Midnight Vibes, Workout Bops"
-              placeholderTextColor="#475569"
+              placeholder="e.g. Midnight Synth, Retro Hits"
+              placeholderTextColor="#64748b"
               value={name}
               onChangeText={setName}
             />
@@ -73,8 +70,8 @@ export default function CreatePlaylistModal({ visible, onClose }) {
             <Text style={styles.label}>DESCRIPTION (OPTIONAL)</Text>
             <TextInput
               style={[styles.input, styles.inputMultiline]}
-              placeholder="Add an optional description…"
-              placeholderTextColor="#475569"
+              placeholder="Add optional notes…"
+              placeholderTextColor="#64748b"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -86,7 +83,7 @@ export default function CreatePlaylistModal({ visible, onClose }) {
               style={[styles.submitBtn, !name.trim() && styles.submitBtnDisabled]}
               disabled={!name.trim()}
             >
-              <Text style={styles.submitBtnText}>SAVE PLAYLIST</Text>
+              <Text style={styles.submitBtnText}>SAVE STEREO PLAYLIST</Text>
             </Pressable>
           </View>
         </View>
@@ -98,7 +95,7 @@ export default function CreatePlaylistModal({ visible, onClose }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: 'rgba(5,7,12,0.85)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -106,10 +103,10 @@ const styles = StyleSheet.create({
   modalBox: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#0f121d',
-    borderRadius: 16,
+    backgroundColor: '#141824',
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
     padding: 20,
     gap: 16,
     ...(Platform.OS === 'web' && {
@@ -121,14 +118,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: '#1e2438',
+    borderBottomColor: '#263048',
     paddingBottom: 12,
   },
   title: {
-    color: '#ffffff',
-    fontSize: 14,
+    color: '#ffaa00',
+    fontSize: 13,
     fontWeight: '900',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   closeBtn: {
     padding: 4,
@@ -143,9 +141,10 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#64748b',
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '800',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   iconRow: {
     flexDirection: 'row',
@@ -155,29 +154,31 @@ const styles = StyleSheet.create({
   iconChip: {
     width: 34,
     height: 34,
-    borderRadius: 8,
-    backgroundColor: '#161c2e',
+    borderRadius: 6,
+    backgroundColor: '#1b2234',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#293550',
   },
   iconChipActive: {
-    backgroundColor: '#0066ff',
-    borderColor: '#3399ff',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   iconText: {
     fontSize: 16,
   },
   input: {
-    backgroundColor: '#141829',
-    borderRadius: 8,
+    backgroundColor: '#0a0d14',
+    borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#ffffff',
-    fontSize: 13,
+    color: '#00e5a3',
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#263048',
     ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
   },
   inputMultiline: {
@@ -185,20 +186,22 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   submitBtn: {
-    backgroundColor: '#0066ff',
-    paddingVertical: 12,
-    borderRadius: 10,
+    backgroundColor: '#ffaa00',
+    paddingVertical: 11,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 6,
+    borderWidth: 1,
+    borderColor: '#ffcc00',
     ...(Platform.OS === 'web' && { cursor: 'pointer' }),
   },
   submitBtnDisabled: {
     opacity: 0.4,
   },
   submitBtnText: {
-    color: '#ffffff',
-    fontSize: 12,
+    color: '#000000',
+    fontSize: 11,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 0.8,
   },
 });

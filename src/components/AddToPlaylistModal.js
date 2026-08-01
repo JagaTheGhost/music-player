@@ -4,9 +4,6 @@ import {
 } from 'react-native';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 
-/**
- * Modal to add/remove a specific song from user's custom playlists.
- */
 export default function AddToPlaylistModal({ song, visible, onClose, onCreateNew }) {
   const { playlists, toggleSongInPlaylist } = useAudioPlayer();
 
@@ -25,7 +22,7 @@ export default function AddToPlaylistModal({ song, visible, onClose, onCreateNew
           <View style={styles.header}>
             <View style={styles.headerTitleBox}>
               <Text style={styles.headerIcon}>➕</Text>
-              <Text style={styles.title}>ADD TO PLAYLIST</Text>
+              <Text style={styles.title}>ADD TO STEREO PLAYLIST</Text>
             </View>
             <Pressable onPress={onClose} style={styles.closeBtn}>
               <Text style={styles.closeText}>✕</Text>
@@ -84,7 +81,7 @@ export default function AddToPlaylistModal({ song, visible, onClose, onCreateNew
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: 'rgba(5,7,12,0.85)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -93,10 +90,10 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 380,
     maxHeight: 450,
-    backgroundColor: '#0f121d',
-    borderRadius: 16,
+    backgroundColor: '#141824',
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
     padding: 18,
     gap: 12,
     ...(Platform.OS === 'web' && {
@@ -108,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: '#1e2438',
+    borderBottomColor: '#263048',
     paddingBottom: 10,
   },
   headerTitleBox: {
@@ -120,10 +117,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   title: {
-    color: '#ffffff',
+    color: '#ffaa00',
     fontSize: 13,
     fontWeight: '900',
     letterSpacing: 1,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   closeBtn: {
     padding: 4,
@@ -134,11 +132,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   songMetaCard: {
-    backgroundColor: '#141829',
+    backgroundColor: '#0a0d14',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#263048',
     gap: 2,
   },
   songTitle: {
@@ -147,8 +145,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   songArtist: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 10,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   scroll: {
     maxHeight: 220,
@@ -168,15 +167,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#121522',
-    borderRadius: 8,
+    backgroundColor: '#1b2234',
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#1e2438',
+    borderColor: '#263048',
     gap: 10,
   },
   playlistRowActive: {
-    borderColor: '#0066ff',
-    backgroundColor: '#161c30',
+    borderColor: '#ffaa00',
+    backgroundColor: '#232d44',
   },
   plIcon: {
     fontSize: 18,
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   plCount: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 10,
   },
   checkbox: {
@@ -199,29 +198,29 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#343e5c',
+    borderColor: '#303e60',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxActive: {
-    backgroundColor: '#0066ff',
-    borderColor: '#0066ff',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   checkIcon: {
-    color: '#ffffff',
+    color: '#000000',
     fontSize: 12,
     fontWeight: '900',
   },
   createNewBtn: {
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1b2234',
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2d3754',
+    borderColor: '#ffaa00',
   },
   createNewText: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 11,
     fontWeight: '900',
     letterSpacing: 0.5,

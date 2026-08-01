@@ -25,16 +25,12 @@ function MechBtn({ iconName, onPress, isActive = false, isPlay = false, size = 1
       <FlatIcon
         name={iconName}
         size={isPlay ? 22 : size}
-        color={isPlay ? '#ffffff' : isActive ? '#39ff14' : '#cbd5e1'}
+        color={isPlay ? '#000000' : isActive ? '#ffaa00' : '#cbd5e1'}
       />
     </Pressable>
   );
 }
 
-/**
- * Early 2000s / 90s Walkman Cassette Player Deck for Mobile View.
- * Supports both Portrait & Landscape modes seamlessly.
- */
 export default function MobilePlayer({ visible, onClose }) {
   const {
     currentSong, isPlaying, isLoading,
@@ -77,7 +73,7 @@ export default function MobilePlayer({ visible, onClose }) {
     changePlaybackRate(rates[(ci + 1) % rates.length]);
   };
 
-  // ── Landscape Walkman Boombox Deck View ──
+  // Landscape View
   if (isLandscape) {
     return (
       <Modal
@@ -96,14 +92,14 @@ export default function MobilePlayer({ visible, onClose }) {
               contentContainerStyle={styles.landscapeScrollContent}
             >
               <View style={styles.landscapeRow}>
-                {/* Left Wing: Cassette Tape & VU Meter */}
+                {/* Left Wing */}
                 <View style={styles.landscapeLeft}>
                   <View style={styles.landscapeHeader}>
                     <Pressable onPress={onClose} style={styles.ejectBtn}>
-                      <FlatIcon name="chevron-down" size={16} color="#0066ff" />
-                      <Text style={styles.ejectText}>EJECT DECK</Text>
+                      <FlatIcon name="chevron-down" size={16} color="#ffaa00" />
+                      <Text style={styles.ejectText}>EJECT TAPE</Text>
                     </Pressable>
-                    <Text style={styles.deckModelText}>NEBULA PORTABLE C-90</Text>
+                    <Text style={styles.deckModelText}>RETRO WALKMAN C-90</Text>
                   </View>
 
                   <View style={styles.landscapeTapeBox}>
@@ -120,7 +116,7 @@ export default function MobilePlayer({ visible, onClose }) {
                   </View>
                 </View>
 
-                {/* Right Wing: Transport Controls & LCD */}
+                {/* Right Wing */}
                 <View style={styles.landscapeRight}>
                   <View style={styles.lcdHeader}>
                     <View style={styles.lcdMeta}>
@@ -128,14 +124,14 @@ export default function MobilePlayer({ visible, onClose }) {
                       <Text style={styles.lcdArtist} numberOfLines={1}>{currentSong.artist}</Text>
                     </View>
                     <Pressable onPress={() => toggleFavorite(currentSong.id)}>
-                      <FlatIcon name={isLiked ? 'star' : 'star-outline'} size={18} color={isLiked ? '#ffcc00' : '#64748b'} />
+                      <FlatIcon name={isLiked ? 'star' : 'star-outline'} size={18} color={isLiked ? '#ffaa00' : '#64748b'} />
                     </Pressable>
                   </View>
 
                   <View style={styles.timeRow}>
                     <Text style={styles.lcdTime}>{formatTime(positionMillis)}</Text>
                     <View style={styles.timelineWrapper}>
-                      <ProgressBar progress={playbackProgress} onSeek={seekTo} color="#0066ff" trackColor="#1a2030" height={4} />
+                      <ProgressBar progress={playbackProgress} onSeek={seekTo} color="#ffaa00" trackColor="#1c2438" height={5} />
                     </View>
                     <Text style={styles.lcdTime}>{formatTime(durationMillis)}</Text>
                   </View>
@@ -147,7 +143,7 @@ export default function MobilePlayer({ visible, onClose }) {
                       onPress={isPlaying ? pauseSong : resumeSong}
                       style={({ pressed }) => [styles.bigPlayBtn, pressed && styles.mechBtnPressed]}
                     >
-                      {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <FlatIcon name={isPlaying ? 'pause' : 'play'} size={22} color="#ffffff" />}
+                      {isLoading ? <ActivityIndicator size="small" color="#000000" /> : <FlatIcon name={isPlaying ? 'pause' : 'play'} size={22} color="#000000" />}
                     </Pressable>
                     <MechBtn iconName="skip-next" onPress={() => playNext(false)} size={18} label="Next" />
                     <MechBtn iconName={repeatIconName} onPress={cycleRepeat} isActive={repeatMode !== 'off'} label="Repeat" />
@@ -155,21 +151,21 @@ export default function MobilePlayer({ visible, onClose }) {
 
                   <View style={styles.landscapeSubRow}>
                     <Pressable onPress={handleRatePress} style={styles.pillBtn}>
-                      <FlatIcon name="flash" size={12} color="#0066ff" />
+                      <FlatIcon name="flash" size={12} color="#ffaa00" />
                       <Text style={styles.pillBtnText}>{playbackRate.toFixed(2)}×</Text>
                     </Pressable>
 
                     <Pressable onPress={handleSleepTimerPress} style={[styles.pillBtn, sleepTimer !== null && styles.pillBtnActive]}>
-                      <FlatIcon name="moon" size={12} color={sleepTimer !== null ? '#ffffff' : '#94a3b8'} />
+                      <FlatIcon name="moon" size={12} color={sleepTimer !== null ? '#000000' : '#94a3b8'} />
                       <Text style={[styles.pillBtnText, sleepTimer !== null && styles.pillBtnTextActive]}>
                         {sleepTimer !== null ? ` ${formatTimer(sleepTimer)}` : 'TIMER'}
                       </Text>
                     </Pressable>
 
                     <View style={styles.volRow}>
-                      <FlatIcon name={volume === 0 ? 'volume-mute' : 'volume-high'} size={14} color="#39ff14" />
+                      <FlatIcon name={volume === 0 ? 'volume-mute' : 'volume-high'} size={14} color="#ffaa00" />
                       <View style={{ flex: 1 }}>
-                        <ProgressBar progress={volume} onSeek={changeVolume} color="#39ff14" trackColor="#1a2030" height={4} />
+                        <ProgressBar progress={volume} onSeek={changeVolume} color="#ffaa00" trackColor="#1c2438" height={4} />
                       </View>
                     </View>
                   </View>
@@ -182,7 +178,7 @@ export default function MobilePlayer({ visible, onClose }) {
     );
   }
 
-  // ── Portrait Walkman Deck View ──
+  // Portrait View
   return (
     <Modal
       visible={visible}
@@ -195,27 +191,27 @@ export default function MobilePlayer({ visible, onClose }) {
       <SafeAreaView style={styles.safeArea}>
         <Animated.View style={[styles.container, { transform: [{ translateY: slideAnim }] }]}>
 
-          {/* ── Walkman Top Bar ── */}
+          {/* Top Bar */}
           <View style={styles.header}>
             <Pressable onPress={onClose} style={styles.ejectBtn}>
-              <FlatIcon name="chevron-down" size={18} color="#0066ff" />
+              <FlatIcon name="chevron-down" size={18} color="#ffaa00" />
               <Text style={styles.ejectText}>EJECT TAPE</Text>
             </Pressable>
 
             <View style={styles.brandBadge}>
-              <Text style={styles.brandTitleText}>NEBULA WALKMAN</Text>
+              <Text style={styles.brandTitleText}>RETRO WALKMAN MP3</Text>
             </View>
 
             <Pressable onPress={() => toggleFavorite(currentSong.id)} style={styles.starBtn}>
-              <FlatIcon name={isLiked ? 'star' : 'star-outline'} size={20} color={isLiked ? '#ffcc00' : '#64748b'} />
+              <FlatIcon name={isLiked ? 'star' : 'star-outline'} size={20} color={isLiked ? '#ffaa00' : '#64748b'} />
             </Pressable>
           </View>
 
-          {/* ── Walkman Cassette Window Center ── */}
+          {/* Cassette Deck Window */}
           <View style={styles.cassetteFrame}>
             <View style={styles.cassetteHeaderRow}>
               <View style={styles.ledDot} />
-              <Text style={styles.cassetteStatusText}>{isPlaying ? 'PLAYING • TAPE RUNNING' : 'PAUSED • READY'}</Text>
+              <Text style={styles.cassetteStatusText}>{isPlaying ? 'TAPE RUNNING • STEREO' : 'PAUSED • READY'}</Text>
             </View>
 
             <View style={styles.cassetteWrapper}>
@@ -228,12 +224,12 @@ export default function MobilePlayer({ visible, onClose }) {
             </View>
           </View>
 
-          {/* ── Graphic Equalizer Wave ── */}
+          {/* Graphic Equalizer */}
           <View style={styles.eqBox}>
             <Oscilloscope isPlaying={isPlaying} barCount={22} height={32} />
           </View>
 
-          {/* ── LCD Counter & Timeline ── */}
+          {/* Timeline & Counter */}
           <View style={styles.timeSection}>
             <View style={styles.timeRow}>
               <Text style={styles.lcdTime}>{formatTime(positionMillis)}</Text>
@@ -242,13 +238,13 @@ export default function MobilePlayer({ visible, onClose }) {
             <ProgressBar
               progress={playbackProgress}
               onSeek={seekTo}
-              color="#0066ff"
-              trackColor="#1a2030"
+              color="#ffaa00"
+              trackColor="#1c2438"
               height={5}
             />
           </View>
 
-          {/* ── Mechanical Transport Keys ── */}
+          {/* Mechanical Transport Keys */}
           <View style={styles.mechControls}>
             <MechBtn iconName="shuffle" onPress={toggleShuffle} isActive={isShuffle} label="Shuffle" />
             <MechBtn iconName="skip-prev" onPress={playPrevious} size={20} label="Previous" />
@@ -258,9 +254,9 @@ export default function MobilePlayer({ visible, onClose }) {
               style={({ pressed }) => [styles.bigPlayBtn, pressed && styles.mechBtnPressed]}
             >
               {isLoading ? (
-                <ActivityIndicator size="large" color="#ffffff" />
+                <ActivityIndicator size="large" color="#000000" />
               ) : (
-                <FlatIcon name={isPlaying ? 'pause' : 'play'} size={26} color="#ffffff" />
+                <FlatIcon name={isPlaying ? 'pause' : 'play'} size={26} color="#000000" />
               )}
             </Pressable>
 
@@ -268,12 +264,12 @@ export default function MobilePlayer({ visible, onClose }) {
             <MechBtn iconName={repeatIconName} onPress={cycleRepeat} isActive={repeatMode !== 'off'} label="Repeat" />
           </View>
 
-          {/* ── Speed, Timer & Skip Keys ── */}
+          {/* Speed & Timers */}
           <View style={styles.secondaryControls}>
             <MechBtn iconName="replay-10" onPress={skipBackward} label="Back 10s" />
 
             <Pressable onPress={handleRatePress} style={styles.pillBtn}>
-              <FlatIcon name="flash" size={12} color="#0066ff" />
+              <FlatIcon name="flash" size={12} color="#ffaa00" />
               <Text style={styles.pillBtnText}>{playbackRate.toFixed(2)}×</Text>
             </Pressable>
 
@@ -281,7 +277,7 @@ export default function MobilePlayer({ visible, onClose }) {
               onPress={handleSleepTimerPress}
               style={[styles.pillBtn, sleepTimer !== null && styles.pillBtnActive]}
             >
-              <FlatIcon name="moon" size={12} color={sleepTimer !== null ? '#ffffff' : '#94a3b8'} />
+              <FlatIcon name="moon" size={12} color={sleepTimer !== null ? '#000000' : '#94a3b8'} />
               <Text style={[styles.pillBtnText, sleepTimer !== null && styles.pillBtnTextActive]}>
                 {sleepTimer !== null ? ` ${formatTimer(sleepTimer)}` : 'TIMER'}
               </Text>
@@ -290,16 +286,16 @@ export default function MobilePlayer({ visible, onClose }) {
             <MechBtn iconName="forward-30" onPress={skipForward} label="Fwd 30s" />
           </View>
 
-          {/* ── High-Contrast Volume Slider ── */}
+          {/* Master Volume */}
           <View style={styles.volumeSection}>
-            <FlatIcon name={volume === 0 ? 'volume-mute' : 'volume-high'} size={16} color="#39ff14" />
+            <FlatIcon name={volume === 0 ? 'volume-mute' : 'volume-high'} size={16} color="#ffaa00" />
             <View style={styles.volumeSlider}>
               <ProgressBar
                 progress={volume}
                 onSeek={changeVolume}
-                color="#39ff14"
-                trackColor="#1a2030"
-                height={4}
+                color="#ffaa00"
+                trackColor="#1c2438"
+                height={5}
               />
             </View>
           </View>
@@ -313,7 +309,7 @@ export default function MobilePlayer({ visible, onClose }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#07090e',
+    backgroundColor: '#0b0d12',
   },
   container: {
     flex: 1,
@@ -322,8 +318,6 @@ const styles = StyleSheet.create({
     gap: 12,
     justifyContent: 'space-between',
   },
-
-  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -334,29 +328,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#121522',
+    backgroundColor: '#141824',
     paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
   },
   ejectText: {
-    color: '#0066ff',
+    color: '#ffaa00',
     fontSize: 10,
     fontWeight: '900',
     letterSpacing: 0.5,
   },
   brandBadge: {
-    backgroundColor: '#0f121d',
+    backgroundColor: '#141824',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#242d42',
   },
   brandTitleText: {
-    color: '#39ff14',
+    color: '#00e5a3',
     fontSize: 10,
     fontWeight: '900',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -367,13 +361,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  // Cassette Window Frame
   cassetteFrame: {
-    backgroundColor: '#0d0f18',
-    borderRadius: 14,
+    backgroundColor: '#101420',
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
     padding: 10,
     gap: 8,
     alignItems: 'center',
@@ -388,11 +380,11 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#39ff14',
-    ...(Platform.OS === 'web' && { boxShadow: '0 0 6px #39ff14' }),
+    backgroundColor: '#00e5a3',
+    ...(Platform.OS === 'web' && { boxShadow: '0 0 6px #00e5a3' }),
   },
   cassetteStatusText: {
-    color: '#39ff14',
+    color: '#00e5a3',
     fontSize: 9,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -402,13 +394,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 4,
   },
-
-  // Oscilloscope
   eqBox: {
     marginVertical: 2,
   },
-
-  // Timeline
   timeSection: {
     gap: 4,
   },
@@ -417,13 +405,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   lcdTime: {
-    color: '#39ff14',
+    color: '#00e5a3',
     fontSize: 11,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
-
-  // Mechanical keys
   mechControls: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -432,41 +418,32 @@ const styles = StyleSheet.create({
   mechBtn: {
     width: 44,
     height: 44,
-    borderRadius: 10,
-    backgroundColor: '#121522',
-    borderWidth: 1,
-    borderColor: '#242a3f',
+    borderRadius: 8,
+    backgroundColor: '#141824',
+    borderWidth: 1.5,
+    borderColor: '#263048',
     alignItems: 'center',
     justifyContent: 'center',
     ...(Platform.OS === 'web' && { cursor: 'pointer' }),
   },
-  mechBtnPlay: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#0066ff',
-    borderColor: '#3399ff',
-    ...(Platform.OS === 'web' && { boxShadow: '0 0 20px rgba(0, 102, 255, 0.6)' }),
-  },
   mechBtnActive: {
-    backgroundColor: '#0055d4',
-    borderColor: '#0088ff',
+    backgroundColor: '#232d44',
+    borderColor: '#ffaa00',
   },
   mechBtnPressed: {
     transform: [{ scale: 0.94 }],
   },
   bigPlayBtn: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#0066ff',
+    width: 56,
+    height: 56,
+    borderRadius: 10,
+    backgroundColor: '#ffaa00',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#3399ff',
+    borderColor: '#ffcc00',
+    ...(Platform.OS === 'web' && { boxShadow: '0 0 16px rgba(255, 170, 0, 0.6)' }),
   },
-
-  // Secondary
   secondaryControls: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -478,14 +455,14 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#121522',
+    borderRadius: 6,
+    backgroundColor: '#141824',
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#263048',
   },
   pillBtnActive: {
-    backgroundColor: '#0066ff',
-    borderColor: '#3399ff',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   pillBtnText: {
     color: '#94a3b8',
@@ -494,10 +471,8 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   pillBtnTextActive: {
-    color: '#ffffff',
+    color: '#000000',
   },
-
-  // Volume
   volumeSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -507,11 +482,9 @@ const styles = StyleSheet.create({
   volumeSlider: {
     flex: 1,
   },
-
-  // ── Landscape Styles ──
   landscapeRoot: {
     flex: 1,
-    backgroundColor: '#07090e',
+    backgroundColor: '#0b0d12',
   },
   landscapeScrollContent: {
     padding: 12,
@@ -524,10 +497,10 @@ const styles = StyleSheet.create({
   },
   landscapeLeft: {
     flex: 1,
-    backgroundColor: '#0d0f18',
-    borderRadius: 14,
+    backgroundColor: '#101420',
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
     padding: 10,
     justifyContent: 'space-between',
     gap: 8,
@@ -538,7 +511,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   deckModelText: {
-    color: '#39ff14',
+    color: '#00e5a3',
     fontSize: 9,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -560,11 +533,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#121522',
+    backgroundColor: '#141824',
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#263048',
   },
   lcdMeta: {
     flex: 1,
@@ -576,7 +549,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   lcdArtist: {
-    color: '#39ff14',
+    color: '#ffaa00',
     fontSize: 9,
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },

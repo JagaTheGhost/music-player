@@ -12,16 +12,16 @@ import CassetteTape from './CassetteTape';
 import Y2kLoadingScreen from './Y2kLoadingScreen';
 
 const VISUALIZERS = [
-  { id: 'cd', label: '📀 CD DISC' },
-  { id: 'vinyl', label: '🛞 VINYL' },
   { id: 'cassette', label: '📼 CASSETTE' },
+  { id: 'vinyl', label: '🛞 VINYL' },
+  { id: 'cd', label: '📀 CD DISC' },
   { id: 'spectrum', label: '🌊 SPECTRUM' },
 ];
 
-function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, onPlayToggle, songCount, activeTab, isDesktop }) {
+function RetroMainDeck({ currentSong, isPlaying, positionMillis, durationMillis, onPlayToggle, songCount, activeTab, isDesktop }) {
   const { themeKey, changeTheme, activeTheme } = useAudioPlayer();
-  const [visualizerMode, setVisualizerMode] = useState('cd');
-  const themeColor = activeTheme?.color || '#39ff14';
+  const [visualizerMode, setVisualizerMode] = useState('cassette');
+  const themeColor = '#ffaa00';
 
   const renderVisualizer = () => {
     switch (visualizerMode) {
@@ -34,19 +34,7 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
             size={isDesktop ? 120 : 95}
           />
         );
-      case 'cassette':
-        return (
-          <CassetteTape
-            title={currentSong?.title}
-            artist={currentSong?.artist}
-            isPlaying={isPlaying}
-            size={isDesktop ? 80 : 70}
-          />
-        );
-      case 'spectrum':
-        return null;
       case 'cd':
-      default:
         return (
           <CdDisc
             uri={currentSong?.cover_url}
@@ -55,12 +43,24 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
             size={isDesktop ? 120 : 95}
           />
         );
+      case 'spectrum':
+        return null;
+      case 'cassette':
+      default:
+        return (
+          <CassetteTape
+            title={currentSong?.title}
+            artist={currentSong?.artist}
+            isPlaying={isPlaying}
+            size={isDesktop ? 85 : 72}
+          />
+        );
     }
   };
 
   return (
     <View style={styles.rackCard}>
-      {/* Y2K Green Matrix LCD Screen */}
+      {/* VFD Screen / LCD Meter */}
       <LcdDisplay
         currentSong={currentSong}
         positionMillis={positionMillis}
@@ -68,10 +68,10 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
         isPlaying={isPlaying}
       />
 
-      {/* Visualizer Mode & Theme Color Selector Bar */}
+      {/* Visualizer Mode & Theme Selector Bar */}
       <View style={styles.visBar}>
         <View style={styles.barGroup}>
-          <Text style={styles.visLabel}>VISUALIZER:</Text>
+          <Text style={styles.visLabel}>STEREO VISUALIZER:</Text>
           <View style={styles.visPillsRow}>
             {VISUALIZERS.map(vis => (
               <Pressable
@@ -89,7 +89,7 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
 
         {/* Theme Selector */}
         <View style={styles.barGroup}>
-          <Text style={styles.visLabel}>THEME:</Text>
+          <Text style={styles.visLabel}>THEME ACCENT:</Text>
           <View style={styles.visPillsRow}>
             {Object.values(THEMES).map(t => (
               <Pressable
@@ -110,7 +110,7 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
         </View>
       </View>
 
-      {/* Deck Middle Visualizer Area */}
+      {/* Middle Deck Area */}
       <View style={styles.middleDeck}>
         {visualizerMode !== 'spectrum' && (
           <View style={styles.cdBox}>
@@ -122,10 +122,10 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
         <View style={styles.eqBox}>
           <View style={styles.eqTitleRow}>
             <Text style={styles.eqTitleText}>
-              {visualizerMode === 'spectrum' ? 'FULL SPECTRUM WAVEFORM • 32 BAND' : 'GRAPHIC EQUALIZER • 10 BAND'}
+              {visualizerMode === 'spectrum' ? 'DUAL STEREO SPECTRUM • 32 BAND' : 'DUAL ANALOG VU METER • 10 BAND'}
             </Text>
             <View style={styles.channelBadge}>
-              <Text style={[styles.channelText, { color: themeColor }]}>{songCount} TRACKS LOADED</Text>
+              <Text style={styles.channelText}>{songCount} TRACKS READY</Text>
             </View>
           </View>
 
@@ -136,10 +136,10 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
           />
 
           <View style={styles.rackFooterRow}>
-            <Pressable onPress={onPlayToggle} style={styles.aquaPlayBtn}>
-              <Text style={styles.aquaPlayBtnText}>{isPlaying ? '⏸ PAUSE DECK' : '▶ PLAY DECK'}</Text>
+            <Pressable onPress={onPlayToggle} style={styles.playDeckBtn}>
+              <Text style={styles.playDeckBtnText}>{isPlaying ? '⏸ PAUSE STEREO DECK' : '▶ PLAY STEREO DECK'}</Text>
             </Pressable>
-            <Text style={[styles.y2kBadgeText, { color: themeColor }]}>Y2K MP3 SYSTEM</Text>
+            <Text style={styles.retroBadgeText}>RETRO HI-FI SYSTEM</Text>
           </View>
         </View>
       </View>
@@ -150,7 +150,7 @@ function Y2kMainRack({ currentSong, isPlaying, positionMillis, durationMillis, o
 function TableHeader({ isDesktop }) {
   return (
     <View style={styles.header}>
-      <View style={styles.indexColHeader} />
+      <Text style={[styles.headerText, styles.indexColHeader]}>#</Text>
       <View style={styles.artColHeader} />
       <Text style={[styles.headerText, styles.titleColHeader]}>TRACK NAME / ARTIST</Text>
       {isDesktop && <Text style={[styles.headerText, styles.tagColHeader]}>FMT</Text>}
@@ -182,7 +182,7 @@ export default function SongList({
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <Y2kMainRack
+      <RetroMainDeck
         currentSong={currentSong}
         isPlaying={isPlaying}
         positionMillis={positionMillis}
@@ -201,14 +201,14 @@ export default function SongList({
       ) : error ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyEmoji}>⚠️</Text>
-          <Text style={styles.emptyTitle}>Disc Read Error</Text>
+          <Text style={styles.emptyTitle}>Hardware Disc Error</Text>
           <Text style={styles.emptySubtitle}>{error}</Text>
         </View>
       ) : songs.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>💾</Text>
+          <Text style={styles.emptyEmoji}>📼</Text>
           <Text style={styles.emptyTitle}>No audio tracks found</Text>
-          <Text style={styles.emptySubtitle}>Try adjusting your channel search</Text>
+          <Text style={styles.emptySubtitle}>Try adjusting your search or channel select</Text>
         </View>
       ) : (
         songs.map((song, idx) => (
@@ -239,27 +239,27 @@ const styles = StyleSheet.create({
     paddingBottom: 140,
   },
   rackCard: {
-    backgroundColor: '#0f121d',
-    borderRadius: 14,
+    backgroundColor: '#101420',
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#242a3f',
+    borderColor: '#ffaa00',
     marginVertical: 12,
     padding: 12,
     gap: 10,
     ...(Platform.OS === 'web' && {
-      boxShadow: '0 12px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1)',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1)',
     }),
   },
   visBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#141828',
+    backgroundColor: '#161c2c',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#242a3f',
+    borderColor: '#232d44',
     flexWrap: 'wrap',
     gap: 8,
   },
@@ -269,10 +269,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   visLabel: {
-    color: '#64748b',
-    fontSize: 9,
+    color: '#94a3b8',
+    fontSize: 8.5,
     fontWeight: '800',
     letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   visPillsRow: {
     flexDirection: 'row',
@@ -282,22 +283,23 @@ const styles = StyleSheet.create({
   visPill: {
     paddingHorizontal: 7,
     paddingVertical: 3,
-    borderRadius: 5,
-    backgroundColor: '#1c2236',
+    borderRadius: 4,
+    backgroundColor: '#1f283e',
     borderWidth: 1,
-    borderColor: '#2d3754',
+    borderColor: '#303e60',
   },
   visPillActive: {
-    backgroundColor: '#0066ff',
-    borderColor: '#3399ff',
+    backgroundColor: '#ffaa00',
+    borderColor: '#ffcc00',
   },
   visPillText: {
-    color: '#94a3b8',
+    color: '#cbd5e1',
     fontSize: 8.5,
     fontWeight: '800',
   },
   visPillTextActive: {
-    color: '#ffffff',
+    color: '#000000',
+    fontWeight: '900',
   },
   themePill: {
     flexDirection: 'row',
@@ -305,10 +307,10 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 7,
     paddingVertical: 3,
-    borderRadius: 5,
-    backgroundColor: '#161b2a',
+    borderRadius: 4,
+    backgroundColor: '#1b2234',
     borderWidth: 1,
-    borderColor: '#242e42',
+    borderColor: '#293550',
   },
   themeDot: {
     width: 6,
@@ -344,18 +346,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   eqTitleText: {
-    color: '#64748b',
-    fontSize: 9,
+    color: '#94a3b8',
+    fontSize: 8.5,
     fontWeight: '800',
     letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   channelBadge: {
-    backgroundColor: '#1c2236',
+    backgroundColor: '#1c2438',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ffaa00',
   },
   channelText: {
+    color: '#ffaa00',
     fontSize: 8,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -366,25 +372,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 2,
   },
-  aquaPlayBtn: {
-    backgroundColor: '#0066ff',
+  playDeckBtn: {
+    backgroundColor: '#ffaa00',
     paddingHorizontal: 14,
     paddingVertical: 7,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#3399ff',
+    borderColor: '#ffcc00',
     ...(Platform.OS === 'web' && {
-      boxShadow: '0 0 12px rgba(0, 102, 255, 0.5)',
+      boxShadow: '0 0 12px rgba(255, 170, 0, 0.5)',
       cursor: 'pointer',
     }),
   },
-  aquaPlayBtnText: {
-    color: '#ffffff',
+  playDeckBtnText: {
+    color: '#000000',
     fontSize: 10,
     fontWeight: '900',
     letterSpacing: 0.5,
   },
-  y2kBadgeText: {
+  retroBadgeText: {
+    color: '#00e5a3',
     fontSize: 9,
     fontWeight: '800',
     fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
@@ -397,13 +404,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerText: {
-    color: '#475569',
+    color: '#64748b',
     fontSize: 9,
     fontWeight: '800',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
-  indexColHeader: { width: 20 },
-  artColHeader: { width: 36 },
+  indexColHeader: { width: 22, textAlign: 'center' },
+  artColHeader: { width: 38 },
   titleColHeader: { flex: 1 },
   tagColHeader: { width: 44 },
   albumColHeader: { flex: 1 },
@@ -411,7 +419,7 @@ const styles = StyleSheet.create({
   durationColHeader: { width: 36, textAlign: 'right' },
   divider: {
     height: 1,
-    backgroundColor: '#1e2438',
+    backgroundColor: '#1c2438',
     marginHorizontal: 4,
     marginBottom: 6,
   },

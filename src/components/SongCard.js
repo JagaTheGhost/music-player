@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import AudioVisualizer from './AudioVisualizer';
 
 export default function SongCard({ song, index, isActive, isPlaying, onPress, isLiked, onLikePress }) {
@@ -12,16 +12,14 @@ export default function SongCard({ song, index, isActive, isPlaying, onPress, is
       onPress={onPress}
       activeOpacity={0.75}
     >
-      {/* Index Column */}
       <View style={styles.indexCol}>
         {isActive ? (
           <AudioVisualizer isPlaying={isPlaying} isMini={true} />
         ) : (
-          <Text style={styles.indexText}>{index + 1}</Text>
+          <Text style={styles.indexText}>{index + 1 < 10 ? `0${index + 1}` : index + 1}</Text>
         )}
       </View>
 
-      {/* Title & Artist info */}
       <View style={styles.titleCol}>
         <Image 
           source={{ uri: song.cover_url || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100' }} 
@@ -37,12 +35,10 @@ export default function SongCard({ song, index, isActive, isPlaying, onPress, is
         </View>
       </View>
 
-      {/* Category / Language Column */}
       <View style={styles.categoryCol}>
-        <Text style={styles.categoryText}>{song.language}</Text>
+        <Text style={styles.categoryText}>{song.language || 'MP3'}</Text>
       </View>
 
-      {/* Heart Column */}
       <View style={styles.heartCol}>
         <TouchableOpacity 
           style={styles.heartButton} 
@@ -53,12 +49,11 @@ export default function SongCard({ song, index, isActive, isPlaying, onPress, is
           activeOpacity={0.7}
         >
           <Text style={[styles.heartIcon, isLiked && styles.heartIconActive]}>
-            {isLiked ? '💙' : '♡'}
+            {isLiked ? '⭐' : '☆'}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Duration Column */}
       <View style={styles.durationCol}>
         <Text style={styles.durationText}>{song.duration || '--:--'}</Text>
       </View>
@@ -71,23 +66,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
     marginBottom: 4,
-    backgroundColor: 'transparent',
+    backgroundColor: '#121624',
+    borderWidth: 1,
+    borderColor: '#1e2638',
   },
   activeRow: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: '#1f283e',
+    borderColor: '#ffaa00',
   },
   indexCol: {
-    width: 32,
+    width: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
   indexText: {
-    color: '#b3b3b3',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#64748b',
+    fontSize: 11,
+    fontWeight: '800',
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   titleCol: {
     flex: 3,
@@ -95,58 +94,62 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cover: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     borderRadius: 4,
-    backgroundColor: '#282828',
-    marginRight: 12,
+    backgroundColor: '#1a2234',
+    marginRight: 10,
   },
   info: {
     flex: 1,
   },
   title: {
     color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '700',
   },
   activeText: {
-    color: '#3b82f6', // Spotify Electric Blue theme active song
+    color: '#ffaa00',
+    fontWeight: '800',
   },
   artist: {
-    color: '#b3b3b3',
-    fontSize: 12,
+    color: '#ffaa00',
+    fontSize: 11,
     marginTop: 2,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   categoryCol: {
     flex: 1.5,
     justifyContent: 'center',
   },
   categoryText: {
-    color: '#b3b3b3',
-    fontSize: 13,
+    color: '#94a3b8',
+    fontSize: 11,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
   heartCol: {
-    width: 44,
+    width: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heartButton: {
-    padding: 6,
+    padding: 4,
   },
   heartIcon: {
-    fontSize: 16,
-    color: '#b3b3b3',
+    fontSize: 14,
+    color: '#64748b',
   },
   heartIconActive: {
-    color: '#3b82f6', // Filled Blue Heart
+    color: '#ffaa00',
   },
   durationCol: {
-    width: 60,
+    width: 50,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   durationText: {
-    color: '#b3b3b3',
-    fontSize: 13,
+    color: '#94a3b8',
+    fontSize: 11,
+    fontFamily: Platform.OS === 'web' ? 'monospace' : 'Courier',
   },
 });

@@ -1,19 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
-import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { formatTime } from '../utils/format';
 
-/**
- * Early 2000s (Y2K) Retro LCD Matrix Screen with Dynamic Neon Theme support.
- */
 export default function LcdDisplay({ currentSong, positionMillis, durationMillis, isPlaying }) {
-  const { activeTheme } = useAudioPlayer();
-  const themeColor = activeTheme?.color || '#39ff14';
-  const themeBg = activeTheme?.darkBg || '#081408';
+  const themeColor = '#00e5a3';
+  const themeBg = '#06100c';
 
   return (
-    <View style={[styles.lcdFrame, { borderColor: themeColor + '44' }]}>
-      <View style={[styles.lcdScreen, { backgroundColor: themeBg, borderColor: themeColor + '33' }]}>
+    <View style={styles.lcdFrame}>
+      <View style={[styles.lcdScreen, { backgroundColor: themeBg }]}>
         {/* Top Status Bar */}
         <View style={styles.topStatusRow}>
           <View style={styles.statusBadge}>
@@ -21,22 +16,22 @@ export default function LcdDisplay({ currentSong, positionMillis, durationMillis
               styles.ledDot,
               isPlaying && { backgroundColor: themeColor, ...(Platform.OS === 'web' && { boxShadow: `0 0 8px ${themeColor}` }) }
             ]} />
-            <Text style={[styles.statusText, { color: themeColor }]}>{isPlaying ? 'PLAYING' : 'PAUSED'}</Text>
+            <Text style={[styles.statusText, { color: themeColor }]}>{isPlaying ? 'DECK PLAYING' : 'DECK PAUSED'}</Text>
           </View>
-          <Text style={[styles.bitrateText, { color: themeColor + 'aa' }]} numberOfLines={1}>320 KBPS • 44.1 KHZ</Text>
+          <Text style={[styles.bitrateText, { color: themeColor + 'aa' }]} numberOfLines={1}>STEREO 320 KBPS • 44.1 KHZ</Text>
         </View>
 
-        {/* Main Title & Artist LCD Text */}
+        {/* Main Title & Artist VFD Text */}
         <View style={styles.metaRow}>
           <Text
             style={[
               styles.songTitleText,
               { color: themeColor },
-              Platform.OS === 'web' && { textShadow: `0 0 8px ${themeColor}88` }
+              Platform.OS === 'web' && { textShadow: `0 0 8px ${themeColor}aa` }
             ]}
             numberOfLines={1}
           >
-            {currentSong ? currentSong.title : 'NEBULA AUDIO Y2K DECK'}
+            {currentSong ? currentSong.title : 'NEBULA RETRO STEREO DECK'}
           </Text>
           <Text style={[styles.artistText, { color: themeColor + 'cc' }]} numberOfLines={1}>
             {currentSong ? currentSong.artist : 'NO TRACK LOADED'}
@@ -44,11 +39,11 @@ export default function LcdDisplay({ currentSong, positionMillis, durationMillis
         </View>
 
         {/* Digital Clock & Format */}
-        <View style={[styles.bottomRow, { borderTopColor: themeColor + '33' }]}>
+        <View style={styles.bottomRow}>
           <Text style={[styles.digitalClock, { color: themeColor }]}>
             {formatTime(positionMillis)} <Text style={{ color: themeColor + '66' }}>/</Text> {formatTime(durationMillis)}
           </Text>
-          <Text style={[styles.formatBadge, { color: themeColor, backgroundColor: themeColor + '22' }]}>MP3</Text>
+          <Text style={[styles.formatBadge, { color: '#ffaa00', backgroundColor: '#ffaa0022' }]}>HI-FI MP3</Text>
         </View>
       </View>
     </View>
@@ -58,16 +53,18 @@ export default function LcdDisplay({ currentSong, positionMillis, durationMillis
 const styles = StyleSheet.create({
   lcdFrame: {
     backgroundColor: '#0a0d0a',
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
+    borderColor: '#ffaa00',
     padding: 2,
   },
   lcdScreen: {
-    borderRadius: 8,
+    borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 4,
     borderWidth: 1,
+    borderColor: '#00e5a344',
   },
   topStatusRow: {
     flexDirection: 'row',
@@ -84,7 +81,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#222222',
+    backgroundColor: '#1b382b',
   },
   statusText: {
     fontSize: 9,
@@ -118,6 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 2,
     borderTopWidth: 1,
+    borderTopColor: '#00e5a333',
     paddingTop: 4,
   },
   digitalClock: {
@@ -131,5 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 3,
+    borderWidth: 1,
+    borderColor: '#ffaa00',
   },
 });
